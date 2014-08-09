@@ -7,6 +7,7 @@ number_of_active_players = 0
 function GM:PlayerInitialSpawn(ply)
 	number_of_active_players = 1 + number_of_active_players
 	ply.victims = {}
+end
 
 
 function GM:PlayerSpawn(ply)
