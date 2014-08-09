@@ -36,8 +36,6 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	table.insert(attacker.victims, target:UniqueID())
 	number_of_active_players = number_of_active_players - 1
 
-	CheckVictoryCondition()
-
 	if not target.victims then
 		print("INGA VICTIMS")
 		return
@@ -48,6 +46,8 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 		RevivePlayer(victim)
 	end
 	target.victims = {}
+
+	CheckVictoryCondition()
 end
 
 function GM:PlayerDeathThink(target)
