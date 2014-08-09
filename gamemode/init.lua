@@ -23,16 +23,20 @@ function GM:EntityTakeDamage(target, damageinfo)
 end
 
 function GM:DoPlayerDeath(target, attacker, damageinfo)
+	print("NOOBEN DOG!")
 	if (attacker:IsPlayer() and not attacker.victims) then
 		attacker.victims = {}
 	end
 	table.insert(attacker.victims, target:UniqueID())
 
 	if not target.victims then
+		print("HEJ")
 		return
 	end
+	print(target.victims)
 
 	for k, victim in ipairs(target.victims) do
+		print(victim)
 		player.GetByUniqueID(victim):UnSpectate()
 	end
 	target.victims = {}
