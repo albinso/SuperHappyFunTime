@@ -44,11 +44,18 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	print(target.victims)
 
 	for k, victim in ipairs(target.victims) do
-		RevivePlayer(victim)
+		print(victim)
+		player.GetByUniqueID(victim):UnSpectate()
+		player.GetByUniqueID(victim):Spawn()
+		number_of_active_players = number_of_active_players + 1
+		print("STOPPED SPECTATING")
 	end
 	target.victims = {}
 
-	CheckVictoryCondition()
+	if number_of_active_players == 1 then
+		print("GUY WINS")
+		GM:RoundEnd()
+	end
 end
 
 function GM:PlayerDeathThink(target)
