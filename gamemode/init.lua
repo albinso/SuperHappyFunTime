@@ -54,7 +54,7 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 
 	if number_of_active_players == 1 then
 		print("GUY WINS")
-		GM:RoundEnd()
+		hook.Call("OnEndRound")
 	end
 end
 
