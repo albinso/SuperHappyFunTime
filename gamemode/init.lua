@@ -54,14 +54,14 @@ function GM:PlayerDeathThink(target)
 	target:Spectate(OBS_MODE_ROAMING)
 end
 
-function CheckVictoryCondition()
+local function CheckVictoryCondition()
 	if number_of_active_players == 1 then
 		print("GUY WINS")
 		GM:RoundEnd()
 	end
 end
 
-function RevivePlayer(victim)
+local function RevivePlayer(victim)
 	print(victim)
 	player.GetByUniqueID(victim):UnSpectate()
 	player.GetByUniqueID(victim):Spawn()
