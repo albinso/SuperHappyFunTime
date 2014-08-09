@@ -43,7 +43,7 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	target.victims = {}
 end
 
-function GM:PlayerDeath(target, inflictor, attacker
+function GM:PlayerDeath(target, inflictor, attacker)
 	print("STARTED SPECTATING")
 	target:Spectate(OBS_MODE_ROAMING)
 end
