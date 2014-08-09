@@ -1,0 +1,12 @@
+"superhappyfuntime"
+{
+	"base"			"base"
+	"title"			"Super Happy Fun Time"
+	"maps"			"^gm_"
+	"menusystem"	"1"
+
+	"settings"
+	{
+		// TODO: put some settings here
+	}
+}
