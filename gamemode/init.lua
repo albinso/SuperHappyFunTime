@@ -30,7 +30,7 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	table.insert(attacker.victims, target:UniqueID())
 
 	if not target.victims then
-		print("HEJ")
+		print("INGA VICTIMS RETURNAR")
 		return
 	end
 	print(target.victims)
@@ -38,10 +38,16 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	for k, victim in ipairs(target.victims) do
 		print(victim)
 		player.GetByUniqueID(victim):UnSpectate()
+		print("STOPPED SPECTATING")
 	end
 	target.victims = {}
 end
 
-function GM:PlayerDeathThink(target)
+function GM:PlayerDeath(target, inflictor, attacker
+	print("STARTED SPECTATING")
 	target:Spectate(OBS_MODE_ROAMING)
+end
+
+function GM:PlayerDeathThink(target)
+	
 end
