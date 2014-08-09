@@ -33,7 +33,7 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	end
 
 	for k, victim in ipairs(target.victims) do
-		--player.GetByUniqueID(victim):UnSpectate()
+		player.GetByUniqueID(victim):UnSpectate()
 	end
 	target.victims = {}
 end
