@@ -51,7 +51,7 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 		print("STOPPED SPECTATING")
 	end
 	target.victims = {}
-
+	print(number_of_active_players)
 	if number_of_active_players == 1 then
 		print("GUY WINS")
 		hook.Call("OnEndRound")
