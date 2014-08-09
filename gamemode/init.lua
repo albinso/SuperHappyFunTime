@@ -3,6 +3,11 @@ AddCSLuaFile("shared.lua")
 
 include("shared.lua")
 
+number_of_active_players = 0
+function GM:InitialSpawn()
+	number_of_active_players = 1 + number_of_active_players
+
+
 function GM:PlayerSpawn(ply)
 	self.BaseClass:PlayerSpawn( ply )   
  
@@ -28,6 +33,11 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 		attacker.victims = {}
 	end
 	table.insert(attacker.victims, target:UniqueID())
+	number_of_active_players = number_of_active_players - 1
+
+	if number_of_active_players == 1 then
+		print("GUY WINS")
+		GM:RoundEnd()
 
 	if not target.victims then
 		print("INGA VICTIMS")
@@ -39,6 +49,7 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 		print(victim)
 		player.GetByUniqueID(victim):UnSpectate()
 		player.GetByUniqueID(victim):Spawn()
+		number_of_active_players = number_of_active_players + 1
 		print("STOPPED SPECTATING")
 	end
 	target.victims = {}
