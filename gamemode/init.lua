@@ -12,6 +12,7 @@ function GM:PlayerSpawn(ply)
     ply:SetWalkSpeed( 325 )  
     ply:SetRunSpeed ( 1000 )
     ply:SetJumpPower(500000)
+    ply:Give("weapon_crowbar")
 end
 
 function GM:EntityTakeDamage(target, damageinfo)
@@ -19,4 +20,24 @@ function GM:EntityTakeDamage(target, damageinfo)
 		damageinfo:SetDamage(0)
 	end
 	return damageinfo
+end
+
+function GM:DoPlayerDeath(target, attacker, damageinfo)
+	if (attacker:IsPlayer() and not attacker.victims) then
+		attacker.victims = {}
+	end
+	table.insert(attacker.victims, target:UniqueID())
+
+	if not target.victims then
+		return
+	end
+
+	for k, victim in ipairs(target.victims) do
+		--player.GetByUniqueID(victim):UnSpectate()
+	end
+	target.victims = {}
+end
+
+function GM:PlayerDeathThink(target)
+	target:Spectate(OBS_MODE_ROAMING)
 end
