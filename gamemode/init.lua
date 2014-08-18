@@ -1,12 +1,14 @@
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
+AddCSLuaFile("round.lua")
 
 include("shared.lua")
+include("round.lua")
 
-active_players = {}
+
 function GM:PlayerInitialSpawn(ply)
-	number_of_active_players = 1 + number_of_active_players
-	ply:SetTeam(number_of_active_players % 2)
+	local tm = (team.NumPlayers(1) > team.NumPlayers(2)) and 2 or 1
+	ply:SetTeam(tm)
 	ply.victims = {}
 end
 
@@ -21,23 +23,22 @@ function GM:PlayerSpawn(ply)
     ply:SetRunSpeed ( 1000 )
     ply:SetJumpPower(500000)
     ply:Give("weapon_crowbar")
-    table.insert(active_players, ply)
 end
 
 function GM:EntityTakeDamage(target, damageinfo)
 	if damageinfo:IsFallDamage() then
 		damageinfo:SetDamage(0)
+	end
 	return damageinfo
 end
 
 function GM:DoPlayerDeath(target, attacker, damageinfo)
 	print("NOOBEN DOG!")
 	if not attacker:IsPlayer() or not attacker:IsBot() then
+		RevivePlayer(target)
 		return
 	end
-	table.insert(attacker.victims, target:UniqueID())
-	table.remove(active_players, target)
-	number_of_active_players = number_of_active_players - 1
+	table.insert(attacker.victims, target)
 
 	if not target.victims then
 		print("INGA VICTIMS")
@@ -50,7 +51,8 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	end
 	target.victims = {}
 	print(number_of_active_players)
-	CheckVictoryCondition()
+	if CheckVictoryCondition() then
+
 end
 
 function GM:PlayerDeathThink(target)
@@ -58,23 +60,19 @@ function GM:PlayerDeathThink(target)
 end
 
 local function CheckVictoryCondition()
-	if number_of_active_players == 1 then
-		print("GUY WINS")
-		GM:RoundEnd()
-	end
+	return not (team.NumPlayers(1) and team.NumPlayers(2))
 end
 
 function GM:PlayerShouldTakeDamage(target, attacker)
 	if attacker:IsPlayer() and attacker:Team() == target:Team() then
 		return false
+	end
 	return true
 end
 
 
-local function RevivePlayer(victim)
-	print(victim)
-	player.GetByUniqueID(victim):UnSpectate()
-	player.GetByUniqueID(victim):Spawn()
-	number_of_active_players = number_of_active_players + 1
+function RevivePlayer(victim)
+	victim:UnSpectate()
+	victim:Spawn()
 	print("STOPPED SPECTATING")
 end
