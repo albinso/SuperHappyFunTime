@@ -3,9 +3,10 @@ AddCSLuaFile("shared.lua")
 
 include("shared.lua")
 
-number_of_active_players = 0
+active_players = {}
 function GM:PlayerInitialSpawn(ply)
 	number_of_active_players = 1 + number_of_active_players
+	ply:SetTeam(number_of_active_players % 2)
 	ply.victims = {}
 end
 
@@ -13,28 +14,29 @@ end
 function GM:PlayerSpawn(ply)
 	self.BaseClass:PlayerSpawn( ply )   
  
-    ply:SetGravity  ( 3 )  -- Although I suggest 1, becuase .75 is just too low.
+    ply:SetGravity  ( 3 ) 
     ply:SetMaxHealth( 100, true )  
  
     ply:SetWalkSpeed( 325 )  
     ply:SetRunSpeed ( 1000 )
     ply:SetJumpPower(500000)
     ply:Give("weapon_crowbar")
+    table.insert(active_players, ply)
 end
 
 function GM:EntityTakeDamage(target, damageinfo)
-	if target:IsPlayer() and damageinfo:IsFallDamage() then
+	if damageinfo:IsFallDamage() then
 		damageinfo:SetDamage(0)
-	end
 	return damageinfo
 end
 
 function GM:DoPlayerDeath(target, attacker, damageinfo)
 	print("NOOBEN DOG!")
-	if not attacker:IsPlayer() then
+	if not attacker:IsPlayer() or not attacker:IsBot() then
 		return
 	end
 	table.insert(attacker.victims, target:UniqueID())
+	table.remove(active_players, target)
 	number_of_active_players = number_of_active_players - 1
 
 	if not target.victims then
@@ -44,18 +46,11 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 	print(target.victims)
 
 	for k, victim in ipairs(target.victims) do
-		print(victim)
-		player.GetByUniqueID(victim):UnSpectate()
-		player.GetByUniqueID(victim):Spawn()
-		number_of_active_players = number_of_active_players + 1
-		print("STOPPED SPECTATING")
+		RevivePlayer(victim)
 	end
 	target.victims = {}
 	print(number_of_active_players)
-	if number_of_active_players == 1 then
-		print("GUY WINS")
-		hook.Call("OnEndRound") -- DOS NUT WRK
-	end
+	CheckVictoryCondition()
 end
 
 function GM:PlayerDeathThink(target)
@@ -68,6 +63,13 @@ local function CheckVictoryCondition()
 		GM:RoundEnd()
 	end
 end
+
+function GM:PlayerShouldTakeDamage(target, attacker)
+	if attacker:IsPlayer() and attacker:Team() == target:Team() then
+		return false
+	return true
+end
+
 
 local function RevivePlayer(victim)
 	print(victim)
