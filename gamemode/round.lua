@@ -1,7 +1,7 @@
 
 round = {}
-round.BREAK = 5 -- Break between rounds.
-round.DURATION = 30 -- Duration of a round
+round.BREAK = 10 -- Break between rounds.
+round.DURATION = 45 -- Duration of a round
 round.active = false
 include("shared.lua")
 

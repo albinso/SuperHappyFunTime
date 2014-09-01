@@ -1,6 +1,7 @@
 AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 AddCSLuaFile("round.lua")
+AddCSLuaFile("cl_hud.lua")
 
 include("shared.lua")
 include("round.lua")
@@ -12,20 +13,31 @@ round.Begin()
 function GM:PlayerInitialSpawn(ply)
 	local tm = (team.NumPlayers(1) > team.NumPlayers(2)) and 2 or 1
 	ply:SetTeam(tm)
+	ply:SetFriction(1)
+
+
+	print(ply:GetName() .. tostring(tm))
 	ply.victims = {}
 end
 
 
 function GM:PlayerSpawn(ply)
 	self.BaseClass:PlayerSpawn( ply )   
+	if tm == 1 then
+		ply:SetModel("models/player/Police.mdl")
+	elseif tm == 2 then
+		ply:SetModel("models/player/guerilla.mdl")
+	end
  
     ply:SetGravity  ( 1 ) 
-    ply:SetMaxHealth( 100, true )  
+    ply:SetMaxHealth( 100, true )
  
     ply:SetWalkSpeed( 325 )  
     ply:SetRunSpeed ( 1000 )
-    ply:SetJumpPower(5000)
+    ply:SetJumpPower(500)
     ply:Give("weapon_rpg")
+    ply:Give("weapon_shotgun")
+    ply:SetAmmo(50, "Buckshot")
     ply:SetAmmo(10, "RPG_Round")
 end
 
@@ -46,7 +58,6 @@ function GM:DoPlayerDeath(target, attacker, damageinfo)
 
 	if not target.victims then
 		print("INGA VICTIMS")
-		return
 	end
 	print(target.victims)
 
@@ -74,7 +85,7 @@ function CheckVictoryCondition()
 end
 
 function GM:PlayerShouldTakeDamage(target, attacker)
-	if attacker:IsPlayer() and attacker:Team() == target:Team() then
+	if attacker:IsPlayer() and not attacker:Team() == target:Team() then
 		return true
 	end
 	return true
@@ -99,3 +110,4 @@ function RevivePlayer(victim)
 	victim:Spawn()
 	print("STOPPED SPECTATING")
 end
+
